@@ -11,14 +11,14 @@
  *       d if sel==11
  */
 
-CHIP Mux4Way {
-    IN a, b, c, d, sel[2];
-    OUT out;
+CHIP Mux4Way16 {
+    IN a[16], b[16], c[16], d[16], sel[2];
+    OUT out[16];
 
     PARTS:
     // Put your code here:
-    Mux(a=a, b=b, sel=sel[0], out=muxAB);
-    Mux(a=c, b=d, sel=sel[0], out=muxCD);
+    Mux16(a=a, b=b, sel=sel[0], out=muxAB0);
+    Mux16(a=c, b=d, sel=sel[0], out=muxCD0);
 
-    Mux(a=muxAB, b=muxCD, sel=sel[1], out=out);
+    Mux16(a=muxAB0, b=muxCD0, sel=sel[1], out=out);
 }
