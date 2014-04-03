@@ -15,4 +15,8 @@ CHIP Bit {
 
     PARTS:
     // Put your code here:
+    Mux(a=latch, b=in, sel=load, out=dffIn);
+    DFF(in=dffIn, out=latch);
+    //If latch = 0 then 0 else 1
+    And(a=latch, b=latch, out=out);
 }

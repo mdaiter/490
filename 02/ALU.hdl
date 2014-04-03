@@ -7,7 +7,7 @@
  * The ALU. Computes one of the following functions:
  * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, !x, !y,
  * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs, 
- * according to 6 input bits denoted zx,nx,zy,ny,f,no.
+ * according to 6 input bits denoted notXZ,nx,zy,ny,f,no.
  * The bit-combinations that yield each function are 
  * documented in the book. In addition, the ALU 
  * computes two 1-bit outputs: if the ALU output
@@ -18,7 +18,7 @@
 // Implementation: the ALU manipulates the x and y
 // inputs and then operates on the resulting values, 
 // as follows:
-// if (zx==1) set x = 0        // 16-bit constant
+// if (notXZ==1) set x = 0        // 16-bit constant
 // if (nx==1) set x = ~x       // bitwise "not"
 // if (zy==1) set y = 0        // 16-bit constant
 // if (ny==1) set y = ~y       // bitwise "not"
@@ -46,4 +46,26 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
+   /* Zero the x input? */
+   NotAnd(in=x, zx=zx, out=zX);
+   NotAnd(in=y, zx=zy, out=zY);
+   /* Not the x input */
+   XOR161(x=zX, comp=nx, out=nzX);
+   /* Not the y input */
+   XOR161(x=zY, comp=ny, out=nzY);
+   /* f that shit */
+   /* Need to add16 and and16*/
+   Add16(a=nzY, b=nzX, out=addxy);
+   And16(a=nzY, b=nzX, out=andxy);
+   Mux16(a=andxy, b=addxy, sel=f, out=finalOp);
+   /* if no then not */
+   Not16(in=finalOp, out=notFinalOp);
+   Mux16(a=finalOp, b=notFinalOp, sel=no, out=somewhatFinalOut);
+   //Send out the output
+   And16(a=somewhatFinalOut, b=somewhatFinalOut, out=out);
+   /* Two auxs*/
+   // Get a zero
+   IsZero16(in=somewhatFinalOut, out=zr);
+   // See if the number is negative
+   IsNegative16(in=somewhatFinalOut, out=ng);
 }

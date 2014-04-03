@@ -1,0 +1,38 @@
+CHIP IsZero16{
+  IN
+    in[16];
+  OUT
+    out;
+  PARTS:
+  Not(in=in[0], out=notIn0);
+  Not(in=in[1], out=notIn1);
+  Not(in=in[2], out=notIn2);
+  Not(in=in[3], out=notIn3);
+  Not(in=in[4], out=notIn4);
+  Not(in=in[5], out=notIn5);
+  Not(in=in[6], out=notIn6);
+  Not(in=in[7], out=notIn7);
+  Not(in=in[8], out=notIn8);
+  Not(in=in[9], out=notIn9);
+  Not(in=in[10], out=notIn10);
+  Not(in=in[11], out=notIn11);
+  Not(in=in[12], out=notIn12);
+  Not(in=in[13], out=notIn13);
+  Not(in=in[14], out=notIn14);
+  Not(in=in[15], out=notIn15);
+  And(a=notIn0, b=notIn1, out=comp1);
+  And(a=comp1, b=notIn2, out=comp3);
+  And(a=comp3, b=notIn3, out=comp4);
+  And(a=comp4, b=notIn4, out=comp5);
+  And(a=comp5, b=notIn5, out=comp6);
+  And(a=comp6, b=notIn6, out=comp7);
+  And(a=comp7, b=notIn7, out=comp8);
+  And(a=comp8, b=notIn8, out=comp9);
+  And(a=comp9, b=notIn9, out=comp10);
+  And(a=comp10, b=notIn10, out=comp11);
+  And(a=comp11, b=notIn11, out=comp12);
+  And(a=comp12, b=notIn12, out=comp13);
+  And(a=comp13, b=notIn13, out=comp14);
+  And(a=comp14, b=notIn14, out=comp15);
+  And(a=comp15, b=notIn15, out=out);
+}

@@ -1,0 +1,11 @@
+CHIP IsNegative16{
+  IN
+    in[16];
+  OUT
+    out;
+  PARTS:
+    //Get a definite one
+    And(a=in[15], b=in[15], out=myOne);
+    //Compare a one to the last number in the sequence
+    And(a=in[15], b=myOne, out=out);
+}
