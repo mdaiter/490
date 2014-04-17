@@ -18,4 +18,14 @@ CHIP DMux8Way {
 
     PARTS:
     // Put your code here:
+    //Prescreening
+    DMux(in=in, sel=sel[2], a=ABCDIn, b=EFGHIn);
+    
+    DMux(in=ABCDIn, sel=sel[1], a=ABIn, b=CDIn);
+    DMux(in=EFGHIn, sel=sel[1], a=EFIn, b=GHIn);
+
+    DMux(in=ABIn, sel=sel[0], a=a, b=b);
+    DMux(in=CDIn, sel=sel[0], a=c, b=d);
+    DMux(in=EFIn, sel=sel[0], a=e, b=f);
+    DMux(in=GHIn, sel=sel[0], a=g, b=h);
 }

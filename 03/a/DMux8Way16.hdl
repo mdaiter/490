@@ -1,0 +1,15 @@
+CHIP DMux8Way16{
+  IN in[16], sel[3];
+  OUT a[16], b[16], c[16], d[16], e[16], f[16], g[16], h[16];
+
+  PARTS:
+  DMux16(in=in, sel=sel[2], a=ABCDIn, b=EFGHIn);
+
+  DMux16(in=ABCDIn, sel=sel[1], a=ABIn, b=CDIn);
+  DMux16(in=EFGHIn, sel=sel[1], a=EFIn, b=GHIn);
+
+  DMux16(in=ABIn, sel=sel[0], a=a, b=b);
+  DMux16(in=CDIn, sel=sel[0], a=c, b=d);
+  DMux16(in=EFIn, sel=sel[0], a=e, b=f);
+  DMux16(in=GHIn, sel=sel[0], a=g, b=h);
+}

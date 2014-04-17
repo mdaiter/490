@@ -16,9 +16,18 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    //Incrementor Selector. If we have an increment signal, load the increment. Else, don't.
+    Mux16(a=false,b=rOutPlus1,sel=inc,out=incOrNot);
+    //Load selector. Are we loading, or incrementing? If we're loading, then choose in over increment. Else, choose increment.
+    Mux16(a=incOrNot,b=in,sel=load,out=loadOrNot);
+    //Reset selector. Are we resetting, or loading? If resetting, false = 0, so we can fill the register with 0s. Else, load or increment.
+    Mux16(a=loadOrNot,b=false,sel=reset,out=rInput);
+    //If we're loading or resetting, this'll eval to true
+    Or(a=load, b=reset, out=loadOrReset);
+    //If we're loading, resetting, or incrementing, set the value of the load on the register to high so we can write.
+    Or(a=loadOrReset, b=inc, out=isLoad);
+    //Input from the muxes, and see if we're loading or reading.
+    Register(in=rInput, load=isLoad, out=rOut, out=out);
+    
+    Inc16(in=rOut, out=rOutPlus1);
 }
-
-
-
-
