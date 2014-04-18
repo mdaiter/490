@@ -40,15 +40,35 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
-
-    Mux16(a=aluOut, b=instruction, sel=control1, out=aRegIn);
-    Register(in=aRegIn, load=, out=aRegOut, out=addressM[0..14]);
+    //Do we load the last output of the ALU to A? If it's a C-instruction and instruciton 5 tells us to do so, then yes
+    And(a=instruction[15], b=instruction[5], out=aluToA);
+    Mux16(a=instruction, b=aluOut, sel=aluToA, out=aRegIn);
+    //See if we need to turn on A-Register
+    Not(in=instruction[15], out=loadIntoARegIfAInstruction);
+    Or(a=loadIntoARegIfAInstruction, b=aluToA, out=loadIntoAReg);
+    ARegister(in=aRegIn, load=loadIntoAReg, out=aRegOut, out[0..14]=addressM);
 
     //Output of A-register
-    PC(in=aRegOut, reset=reset, inc=true, load=, out=pc)
-    Mux16(a=aRegOut,b=inM,sel=,out=aluY);
+    PC(in=aRegOut, reset=reset, inc=true, load=finalJump, out[0..14]=pc);
+    //Instruction 12 is aSelector
+    Mux16(a=aRegOut,b=inM,sel=instruction[12],out=aluAM);
+    //See if we need to jump
+    And(a=aluZR, b=instruction[1], out=jumpZero);
+    And(a=aluNG, b=instruction[2], out=jumpNeg);
+    Or(a=aluNG, b=aluZR, out=zeroOrNeg);
+    Not(in=zeroOrNeg, out=positive);
+    And(a=positive, b=instruction[0], out=jumpIfPositive);
+    Or(a=jumpZero, b=jumpNeg, out=jumpIfZeroOrNeg);
+    Or(a=jumpIfZeroOrNeg, b=jumpIfPositive, out=finalJumpTest);
+    //Jump if it's a C instruction.
+    And(a=instruction[15], b=finalJumpTest, out=finalJump);
 
     //ALU Stuff
-    ALU(x=,y=aluY,zx=,nx=,zy=,ny=,f=,no=,out=aluOut, zr=, ng=);
-
+    ALU(x=dOut,y=aluAM,zx=instruction[11],nx=instruction[10],zy=instruction[9],ny=instruction[8],f=instruction[7],no=instruction[6],out=aluOut, out=outM, zr=aluZR, ng=aluNG);
+    //Do we need to load into the DRegister?
+    //Check if C-instruction and instruction[4]. If so, load into D
+    And(a=instruction[15], b=instruction[4], out=loadD);
+    DRegister(in=aluOut, load=loadD, out=dOut);
+    //writeM. C-instruction and instruction[3]. Do we write it to memory?
+    And(a=instruction[15], b=instruction[3], out=writeM);
 }
